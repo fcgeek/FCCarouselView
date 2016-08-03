@@ -14,8 +14,7 @@ public protocol CarouselViewDelegate:class {
 }
 
 public struct CarouselData {
-    public init() {
-    }
+    public init() {}
     public var image: UIImage!
     public var imageURL: NSURL!
     public var detail: String!
@@ -23,18 +22,14 @@ public struct CarouselData {
 
 public enum AutoScrollOption {
     case Enable(Bool)
-    case TimeInterval(CGFloat)
-}
-
-public enum PageControlStyleOption {
-    case currentColor(UIColor)
-    case tintColor(UIColor)
+    case TimeInterval(NSTimeInterval)
 }
 
 public class CarouselView: UIView {
     
     public weak var delegate:CarouselViewDelegate?
     private var pageCount = 0
+    private var timeInterval:NSTimeInterval = 3
     private var timer: NSTimer?
     
     override public init(frame: CGRect) {
@@ -63,7 +58,7 @@ public class CarouselView: UIView {
     
     private func startTimer() {
         timer?.invalidate()
-        timer = NSTimer(timeInterval: 3, target: self, selector: #selector(scrollNextPage), userInfo: nil, repeats: true)
+        timer = NSTimer(timeInterval: timeInterval, target: self, selector: #selector(scrollNextPage), userInfo: nil, repeats: true)
         NSRunLoop.mainRunLoop().addTimer(timer!, forMode: NSRunLoopCommonModes)
     }
     
@@ -110,6 +105,27 @@ public class CarouselView: UIView {
             pageControl.numberOfPages = pageCount
         }
     }
+    
+    public var autoScrollOptions: [AutoScrollOption]? {
+        didSet {
+            timer?.invalidate()
+            var enable = true
+            if let options = autoScrollOptions {
+                options.forEach({ (option) in
+                    switch option {
+                    case let .Enable(value):
+                        enable = value
+                        
+                    case let .TimeInterval(value):
+                        timeInterval = value
+                    }
+                })
+            }
+            if enable {
+                startTimer()
+            }
+        }
+    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -146,6 +162,14 @@ extension CarouselView: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 extension CarouselView: UICollectionViewDelegate {
+    public func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+        timer?.invalidate()
+    }
+    
+    public func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        startTimer()
+    }
+    
     public func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         calculatePage()
     }
