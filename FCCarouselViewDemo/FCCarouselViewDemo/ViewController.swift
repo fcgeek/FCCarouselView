@@ -23,8 +23,26 @@ class ViewController: UIViewController {
     
     //MARK: getter
     private lazy var carouselView:CarouselView = {
-        let carouselView = CarouselView(frame: CGRectMake(0,30, UIScreen.mainScreen().bounds.width, 100))
-        
+        let carouselView = CarouselView(frame: CGRectMake(0,30, UIScreen.mainScreen().bounds.width, 200))
+        var carouselData1 = CarouselData()
+        carouselData1.image = UIImage(named: "1")
+        carouselData1.detail = "I created a swift class with string optionals (String?) and instantiated the class in a different swift file and got a compile error."
+        carouselView.carouselDatas.append(carouselData1)
+        carouselData1 = CarouselData()
+        carouselData1.image = UIImage(named: "2")
+        carouselData1.detail = "When I instantiate the class"
+        carouselView.carouselDatas.append(carouselData1)
+        carouselData1 = CarouselData()
+        carouselData1.image = UIImage(named: "3")
+        carouselView.carouselDatas.append(carouselData1)
+        carouselData1 = CarouselData()
+        carouselData1.image = UIImage(named: "4")
+        carouselData1.detail = "If the var item = ShoppingListItem() is done in the appDelegate.swift, from the function application:didFinishLaunchingWithOptions we get the error"
+        carouselView.carouselDatas.append(carouselData1)
+        carouselData1 = CarouselData()
+        carouselData1.image = UIImage(named: "5")
+        carouselData1.detail = "<class> cannot be initialised because it has no accessible initializers"
+        carouselView.carouselDatas.append(carouselData1)
         return carouselView
     }()
     

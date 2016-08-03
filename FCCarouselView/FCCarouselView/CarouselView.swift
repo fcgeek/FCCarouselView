@@ -13,10 +13,29 @@ public protocol CarouselViewDelegate:class {
     func carouselView(view:CarouselView, cellForItemAtIndex index:NSInteger) -> UICollectionViewCell
 }
 
+public struct CarouselData {
+    public init() {
+    }
+    public var image: UIImage!
+    public var imageURL: NSURL!
+    public var detail: String!
+}
+
+public enum AutoScrollOption {
+    case Enable(Bool)
+    case TimeInterval(CGFloat)
+}
+
+public enum PageControlStyleOption {
+    case currentColor(UIColor)
+    case tintColor(UIColor)
+}
+
 public class CarouselView: UIView {
     
     public weak var delegate:CarouselViewDelegate?
-    private var pageCount = 3
+    private var pageCount = 0
+    private var timer: NSTimer?
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
@@ -32,8 +51,25 @@ public class CarouselView: UIView {
     private func setupSubView() {
         addSubview(collectionView)
         addSubview(pageControl)
-        collectionView.registerClass(CarouselCollectionViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(CarouselCollectionViewCell))
-        collectionView.contentOffset.x = collectionView.bounds.width
+        startTimer()
+    }
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        collectionView.frame = bounds
+        let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout
+        layout?.itemSize = bounds.size
+    }
+    
+    private func startTimer() {
+        timer?.invalidate()
+        timer = NSTimer(timeInterval: 3, target: self, selector: #selector(scrollNextPage), userInfo: nil, repeats: true)
+        NSRunLoop.mainRunLoop().addTimer(timer!, forMode: NSRunLoopCommonModes)
+    }
+    
+    func scrollNextPage() {
+        let nextPageOffsetX = collectionView.contentOffset.x + collectionView.bounds.width
+        collectionView.setContentOffset(CGPoint(x: nextPageOffsetX, y:0), animated: true)
     }
     
     //MARK: getter
@@ -41,8 +77,7 @@ public class CarouselView: UIView {
         let flowLayout =  UICollectionViewFlowLayout()
         flowLayout.itemSize = self.bounds.size
         flowLayout.minimumLineSpacing = 0
-        flowLayout.scrollDirection = .Horizontal
-        //        self.flowLayout = flowLayout
+        flowLayout.scrollDirection = .Horizontal        
         
         let collectionView = UICollectionView(frame: self.bounds, collectionViewLayout: flowLayout)
         collectionView.showsVerticalScrollIndicator = false
@@ -51,6 +86,8 @@ public class CarouselView: UIView {
         collectionView.pagingEnabled = true
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.registerClass(CarouselCollectionViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(CarouselCollectionViewCell))
+        collectionView.contentOffset.x = self.bounds.width
         return collectionView
     }()
     
@@ -65,28 +102,45 @@ public class CarouselView: UIView {
         pageControl.frame.origin.y = self.bounds.height - size.height
         return pageControl
     }()
+    
+    //MARK: setter
+    public var carouselDatas = [CarouselData]() {
+        didSet {
+            pageCount = carouselDatas.count
+            pageControl.numberOfPages = pageCount
+        }
+    }
 }
 
 // MARK: - UICollectionViewDataSource
 extension CarouselView: UICollectionViewDataSource {
     
     public func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return pageCount+2
+        return pageCount > 1 ? pageCount+2 : pageCount
     }
     
     public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        if let cell = delegate?.carouselView(self, cellForItemAtIndex: indexPath.row) {
+        let index = getIndexWithIndexPath(indexPath)
+        if let cell = delegate?.carouselView(self, cellForItemAtIndex: index) {
             return cell
         }
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(CarouselCollectionViewCell), forIndexPath: indexPath) as! CarouselCollectionViewCell
-        if indexPath.row < 1 {
-            cell.label.text = String(pageCount-1)
-        } else if indexPath.row > pageCount {
-            cell.label.text = "0"
-        } else {
-            cell.label.text = String(indexPath.row-1)
-        }
+        cell.carouselData = carouselDatas[index]
         return cell
+    }
+    
+    private func getIndexWithIndexPath(indexPath:NSIndexPath) -> Int {
+        var index = indexPath.row
+        if indexPath.row < 1 {
+            index = pageCount-1
+            
+        } else if indexPath.row > pageCount {
+            index = 0
+            
+        } else {
+            index = indexPath.row-1
+        }
+        return index
     }
 }
 
