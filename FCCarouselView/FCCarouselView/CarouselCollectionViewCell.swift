@@ -10,8 +10,6 @@ import UIKit
 
 class CarouselCollectionViewCell: UICollectionViewCell {
     
-    private let imageView = UIImageView()
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupSubView()
@@ -32,16 +30,22 @@ class CarouselCollectionViewCell: UICollectionViewCell {
         imageView.frame = bounds
     }
     
-    //MARK: getter 懒加载    
-    private lazy var detailLabel: UILabel = {
-        let label = UILabel(frame: self.bounds)
+    //MARK: getter
+    private let imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .ScaleToFill
+        return imageView
+    }()
+    
+    private let detailLabel: UILabel = {
+        let label = UILabel()
         label.textColor = UIColor.whiteColor()
         label.numberOfLines = 3
         label.lineBreakMode = .ByTruncatingTail
         return label
     }()
     
-    private lazy var detailMaskView: UIView = {
+    private let detailMaskView: UIView = {
         let maskView = UIView()
         maskView.backgroundColor = UIColor(white: 0, alpha: 0.7)
         return maskView
@@ -52,15 +56,17 @@ class CarouselCollectionViewCell: UICollectionViewCell {
         didSet {
             if let image = carouselData.image {
                 imageView.image = image
-            } else {
-                //TODO: URL Image
+            } else if let imageUrl = carouselData.imageURL {                
+                ImageManager.shareManager.downloadImageWithURL(imageUrl, downloadClosure: { [unowned self](image) in
+                    self.imageView.image = image
+                    })
             }
             if let detail = carouselData.detail {
                 detailMaskView.hidden = false
                 detailLabel.text = detail
-                let maskViewHeight = detailLabel.sizeThatFits(bounds.size).height + 20
-                detailMaskView.frame = CGRect(x: 0, y: bounds.height-maskViewHeight, width: bounds.width, height: maskViewHeight)
                 let labelMargin:CGFloat = 12
+                let maskViewHeight = detailLabel.sizeThatFits(CGSize(width: bounds.size.width-labelMargin*2, height: bounds.size.height)).height + 20
+                detailMaskView.frame = CGRect(x: 0, y: bounds.height-maskViewHeight, width: bounds.width, height: maskViewHeight)
                 detailLabel.frame = CGRect(x: labelMargin, y: 0, width: detailMaskView.bounds.width-labelMargin*2, height: detailMaskView.bounds.height)
                 
             } else {

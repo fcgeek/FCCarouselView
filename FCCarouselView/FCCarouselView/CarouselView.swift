@@ -8,9 +8,9 @@
 
 import UIKit
 
-public protocol CarouselViewDelegate:class {
-    func registerClass(cellClass: AnyClass?)
-    func carouselView(view:CarouselView, cellForItemAtIndex index:NSInteger) -> UICollectionViewCell
+@objc public protocol CarouselViewDelegate: class {
+    optional func carouselView(view:CarouselView, cellForItemAtIndex index:NSInteger) -> UICollectionViewCell
+    optional func carouselView(view:CarouselView, didSelectItemAtIndex index:NSInteger)
 }
 
 public struct CarouselData {
@@ -34,7 +34,6 @@ public class CarouselView: UIView {
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor.blueColor()
         setupSubView()
     }
     
@@ -53,7 +52,7 @@ public class CarouselView: UIView {
         super.layoutSubviews()
         collectionView.frame = bounds
         let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout
-        layout?.itemSize = bounds.size
+        layout?.itemSize = bounds.size        
     }
     
     private func startTimer() {
@@ -65,6 +64,10 @@ public class CarouselView: UIView {
     func scrollNextPage() {
         let nextPageOffsetX = collectionView.contentOffset.x + collectionView.bounds.width
         collectionView.setContentOffset(CGPoint(x: nextPageOffsetX, y:0), animated: true)
+    }
+    
+    public func registerClass(cellClass: AnyClass) {
+        collectionView.registerClass(cellClass, forCellWithReuseIdentifier: NSStringFromClass(cellClass))
     }
     
     //MARK: getter
@@ -126,6 +129,8 @@ public class CarouselView: UIView {
             }
         }
     }
+    public var pageIndicatorTintColor: UIColor? { didSet { pageControl.pageIndicatorTintColor = pageIndicatorTintColor } }
+    public var currentPageIndicatorTintColor: UIColor? { didSet { pageControl.currentPageIndicatorTintColor = currentPageIndicatorTintColor } }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -137,7 +142,7 @@ extension CarouselView: UICollectionViewDataSource {
     
     public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let index = getIndexWithIndexPath(indexPath)
-        if let cell = delegate?.carouselView(self, cellForItemAtIndex: index) {
+        if let cell = delegate?.carouselView?(self, cellForItemAtIndex: index) {
             return cell
         }
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(CarouselCollectionViewCell), forIndexPath: indexPath) as! CarouselCollectionViewCell
@@ -162,6 +167,10 @@ extension CarouselView: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 extension CarouselView: UICollectionViewDelegate {
+    public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        delegate?.carouselView?(self, didSelectItemAtIndex: getIndexWithIndexPath(indexPath))
+    }
+    
     public func scrollViewWillBeginDragging(scrollView: UIScrollView) {
         timer?.invalidate()
     }
