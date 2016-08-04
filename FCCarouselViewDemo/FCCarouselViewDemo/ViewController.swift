@@ -35,14 +35,14 @@ class ViewController: UIViewController, CarouselViewDelegate {
         carouselData1.detail = "I created a swift class with string optionals (String?) and instantiated the class in a different swift file and got a compile error."
         carouselView.carouselDatas.append(carouselData1)
         carouselData1 = CarouselData()
-        carouselData1.image = UIImage(named: "2")
+        carouselData1.imageURL = NSURL(string: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSMFynE3clrgzCU2ZDw9SDn5gM2JuwEsCE37Qf4S6uBlJljejEYWg")//UIImage(named: "2")
         carouselData1.detail = "When I instantiate the class"
         carouselView.carouselDatas.append(carouselData1)
         carouselData1 = CarouselData()
         carouselData1.image = UIImage(named: "3")
         carouselView.carouselDatas.append(carouselData1)
         carouselData1 = CarouselData()
-        carouselData1.image = UIImage(named: "4")
+        carouselData1.imageURL = NSURL(string: "https://g.twimg.com/blog/blog/image/Cat-party.gif")
         carouselData1.detail = "If the var item = ShoppingListItem() is done in the appDelegate.swift, from the function application:didFinishLaunchingWithOptions we get the error"
         carouselView.carouselDatas.append(carouselData1)
         carouselData1 = CarouselData()
