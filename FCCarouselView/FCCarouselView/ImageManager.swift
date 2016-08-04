@@ -8,6 +8,7 @@
 
 import UIKit
 import Foundation
+import ImageIO
 
 class ImageManager {
     
@@ -18,6 +19,7 @@ class ImageManager {
     public let diskCachePath: String
     private let ioQueue: dispatch_queue_t
     private var fileManager: NSFileManager!
+    typealias DownloadClosure = (UIImage)->()
     
     init() {
         let cacheName = "FCCarouselView.ImageManager.memoryCache.by.liujianlin"
@@ -30,14 +32,6 @@ class ImageManager {
         })
     }
     
-    /// 找不到图片
-    private let notFoundImage: UIImage = {
-        let frameworkBundle = NSBundle(forClass: FCCarouselView.ImageManager.self)
-        let imagePath = frameworkBundle.pathForResource("imageNotFound", ofType: "png")!
-        return UIImage(contentsOfFile: imagePath)!
-    }()
-    
-    typealias DownloadClosure = (UIImage)->()
     func downloadImageWithURL(url: NSURL, downloadClosure: DownloadClosure) {
         if let image = memoryCache.objectForKey(url.absoluteString) as? UIImage {
             downloadClosure(image)
@@ -53,7 +47,7 @@ class ImageManager {
                 return
             }
             guard let data = data else { return }
-            guard let image = UIImage(data: data) else {
+            guard let image = self.getImageWithData(data) else {
                 self.imageUrlNotFound(url, downloadClosure: downloadClosure)
                 return
             }
@@ -62,6 +56,41 @@ class ImageManager {
                 downloadClosure(image)
             })
             }.resume()
+    }
+    
+    private func getImageWithData(data:NSData) -> UIImage? {
+        guard let imageSource = CGImageSourceCreateWithData(data, nil) else { return nil }
+        let count = CGImageSourceGetCount(imageSource)
+        if count > 1 {
+            var images = [UIImage]()
+            var duration:Float = 0
+            for index in 0...count {
+                guard let cgImage = CGImageSourceCreateImageAtIndex(imageSource, index, nil) else { continue }
+                duration += durationWithSourceAtIndex(imageSource, index: index)
+                images.append(UIImage(CGImage: cgImage))
+            }
+            if duration.isZero { duration = 0.1*Float(count) }
+            return UIImage.animatedImageWithImages(images, duration: NSTimeInterval(duration))
+            
+        } else {
+            return UIImage(data: data)
+        }
+    }
+    
+    /**
+     获取每一帧图片的时长
+     */
+    private func durationWithSourceAtIndex(source: CGImageSource, index: Int) -> Float {
+        var duration: Float = 0.1
+        guard let properties = CGImageSourceCopyPropertiesAtIndex(source, index, nil) as? [String: AnyObject] else { return duration }
+        guard let gifProperties = properties[kCGImagePropertyGIFDictionary as String] as? [String: AnyObject] else { return duration }
+        if let delayTime = gifProperties[kCGImagePropertyGIFUnclampedDelayTime as String] as? NSNumber {
+            return delayTime.floatValue
+            
+        } else if let delayTime = gifProperties[kCGImagePropertyGIFDelayTime  as String] as? NSNumber {
+            return delayTime.floatValue
+        }
+        return duration
     }
     
     /**
@@ -81,18 +110,9 @@ class ImageManager {
      If `nil` is supplied, the image data will be saved as a normalized PNG file.
      It is strongly suggested to supply it whenever possible, to get a better performance and disk usage.
      - parameter key:               Key for the image.
-     - parameter toDisk:            Whether this image should be cached to disk or not. If false, the image will be only cached in memory.
-     - parameter completionHandler: Called when store operation completes.
      */
-    private func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String, completionHandler: (() -> Void)? = nil) {
+    private func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String) {
         memoryCache.setObject(image, forKey: key)
-        func callHandlerInMainQueue() {
-            if let handler = completionHandler {
-                dispatch_async(dispatch_get_main_queue()) {
-                    handler()
-                }
-            }
-        }
         dispatch_async(ioQueue, {
             if let data = originalData {
                 if !self.fileManager.fileExistsAtPath(self.diskCachePath) {
@@ -103,7 +123,6 @@ class ImageManager {
                 
                 self.fileManager.createFileAtPath(self.cachePathForKey(key), contents: data, attributes: nil)
             }
-            callHandlerInMainQueue()
         })
     }
     
@@ -119,4 +138,12 @@ class ImageManager {
     private func cachePathForKey(key: String) -> String {
         return (diskCachePath as NSString).stringByAppendingPathComponent(key)
     }
+    
+    //MARK: getter
+    /// 找不到图片
+    private let notFoundImage: UIImage = {
+        let frameworkBundle = NSBundle(forClass: FCCarouselView.ImageManager.self)
+        let imagePath = frameworkBundle.pathForResource("imageNotFound", ofType: "png")!
+        return UIImage(contentsOfFile: imagePath)!
+    }()
 }
