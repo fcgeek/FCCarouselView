@@ -76,6 +76,9 @@ public class CarouselView: UIView {
         let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout
         layout?.itemSize = bounds.size
         collectionView.scrollToItemAtIndexPath(NSIndexPath(forRow: pageControl.currentPage+1, inSection: 0), atScrollPosition: .None, animated: false)
+        let size = pageControl.sizeForNumberOfPages(pageControl.numberOfPages)
+        pageControl.frame.size.height = size.height
+        pageControl.frame.origin.y = self.bounds.height - size.height
     }
     
     private func startTimer() {
