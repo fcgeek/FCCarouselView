@@ -10,6 +10,8 @@ import UIKit
 
 class CarouselCollectionViewCell: UICollectionViewCell {
     
+    var placeHolderImage:UIImage?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupSubView()
@@ -28,6 +30,11 @@ class CarouselCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         imageView.frame = bounds
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil
     }
     
     //MARK: getter
@@ -56,8 +63,8 @@ class CarouselCollectionViewCell: UICollectionViewCell {
         didSet {
             if let image = carouselData.image {
                 imageView.image = image
-            } else if let imageUrl = carouselData.imageURL {                
-                ImageManager.shareManager.downloadImageWithURL(imageUrl, downloadClosure: { [unowned self](image) in
+            } else if let imageUrl = carouselData.imageURL {
+                ImageManager.shareManager.downloadImageWithURL(imageUrl, placeholder: placeHolderImage, downloadDoneClosure: { [unowned self](image) in
                     self.imageView.image = image
                     })
             }

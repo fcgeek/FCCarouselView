@@ -19,11 +19,12 @@ class ImageManager {
     public let diskCachePath: String
     private let ioQueue: dispatch_queue_t
     private var fileManager: NSFileManager!
-    typealias DownloadClosure = (UIImage)->()
+    typealias DownloadDoneClosure = (UIImage)->()
     
     init() {
         let cacheName = "FCCarouselView.ImageManager.memoryCache.by.liujianlin"
         memoryCache.name = cacheName
+        memoryCache.countLimit = 20
         let dstPath = NSSearchPathForDirectoriesInDomains(.CachesDirectory, NSSearchPathDomainMask.UserDomainMask, true).first!
         diskCachePath = (dstPath as NSString).stringByAppendingPathComponent(cacheName)
         ioQueue = dispatch_queue_create("\(cacheName).ioQueue", DISPATCH_QUEUE_SERIAL)
@@ -32,29 +33,35 @@ class ImageManager {
         })
     }
     
-    func downloadImageWithURL(url: NSURL, downloadClosure: DownloadClosure) {
+    func downloadImageWithURL(url: NSURL, placeholder: UIImage?, downloadDoneClosure: DownloadDoneClosure) {
+        func completed(image:UIImage) {
+            dispatch_async(dispatch_get_main_queue()) { 
+                downloadDoneClosure(image)
+            }
+        }
         if let image = memoryCache.objectForKey(url.absoluteString) as? UIImage {
-            downloadClosure(image)
+            completed(image)
             return
             
         } else if let image = diskImageForKey(url.absoluteString) {
-            downloadClosure(image)
+            memoryCache.setObject(image, forKey: url.absoluteString)
+            completed(image)
             return
         }
+        completed(placeholder ?? placeholderImage)
         NSURLSession.sharedSession().dataTaskWithURL(url) { [unowned self](data, response, error) in
             if let error = error {
-                self.imageUrlNotFound(url, downloadClosure: downloadClosure)
+                self.imageUrlNotFound(url, downloadClosure: completed)
                 return
             }
             guard let data = data else { return }
             guard let image = self.getImageWithData(data) else {
-                self.imageUrlNotFound(url, downloadClosure: downloadClosure)
+                self.imageUrlNotFound(url, downloadClosure: completed)
                 return
             }
             self.storeImage(image, forKey: url.absoluteString)
-            dispatch_async(dispatch_get_main_queue(), {
-                downloadClosure(image)
-            })
+            completed(image)
+            
             }.resume()
     }
     
@@ -96,7 +103,7 @@ class ImageManager {
     /**
      找不到图片或者图片有问题
      */
-    private func imageUrlNotFound(url:NSURL, downloadClosure: DownloadClosure) {
+    private func imageUrlNotFound(url:NSURL, downloadClosure: DownloadDoneClosure) {
         memoryCache.setObject(notFoundImage, forKey: url.absoluteString)
         downloadClosure(notFoundImage)
     }
@@ -106,9 +113,6 @@ class ImageManager {
      
      - parameter image:             The image to be stored.
      - parameter originalData:      The original data of the image.
-     Kingfisher will use it to check the format of the image and optimize cache size on disk.
-     If `nil` is supplied, the image data will be saved as a normalized PNG file.
-     It is strongly suggested to supply it whenever possible, to get a better performance and disk usage.
      - parameter key:               Key for the image.
      */
     private func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String) {
@@ -144,6 +148,13 @@ class ImageManager {
     private let notFoundImage: UIImage = {
         let frameworkBundle = NSBundle(forClass: FCCarouselView.ImageManager.self)
         let imagePath = frameworkBundle.pathForResource("imageNotFound", ofType: "png")!
+        return UIImage(contentsOfFile: imagePath)!
+    }()
+    
+    
+    private let placeholderImage: UIImage = {
+        let frameworkBundle = NSBundle(forClass: FCCarouselView.ImageManager.self)
+        let imagePath = frameworkBundle.pathForResource("placeholder", ofType: "png")!
         return UIImage(contentsOfFile: imagePath)!
     }()
 }

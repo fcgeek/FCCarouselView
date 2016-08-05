@@ -25,12 +25,21 @@ public enum AutoScrollOption {
     case TimeInterval(NSTimeInterval)
 }
 
+public enum PageControlOption {
+    case Hidden(Bool)
+    case IndicatorTintColor(UIColor)
+    case CurrentIndicatorTintColor(UIColor)
+    //    public var pageIndicatorTintColor: UIColor? { didSet { pageControl.pageIndicatorTintColor = pageIndicatorTintColor } }
+    //    public var currentPageIndicatorTintColor: UIColor? { didSet { pageControl.currentPageIndicatorTintColor = currentPageIndicatorTintColor } }
+}
+
 public class CarouselView: UIView {
     
     public weak var delegate:CarouselViewDelegate?
     private var pageCount = 0
     private var timeInterval:NSTimeInterval = 3
     private var timer: NSTimer?
+    public var placeholderImage:UIImage?
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
@@ -129,8 +138,25 @@ public class CarouselView: UIView {
             }
         }
     }
-    public var pageIndicatorTintColor: UIColor? { didSet { pageControl.pageIndicatorTintColor = pageIndicatorTintColor } }
-    public var currentPageIndicatorTintColor: UIColor? { didSet { pageControl.currentPageIndicatorTintColor = currentPageIndicatorTintColor } }
+    
+    public var pageControlOptions: [PageControlOption]? {
+        didSet {
+            if let options = pageControlOptions {
+                options.forEach({ (option) in
+                    switch option {
+                    case let .Hidden(value):
+                        pageControl.hidden = value
+                        
+                    case let .IndicatorTintColor(value):
+                        pageControl.pageIndicatorTintColor = value
+                        
+                    case let .CurrentIndicatorTintColor(value):
+                        pageControl.currentPageIndicatorTintColor = value
+                    }
+                })
+            }
+        }
+    }
 }
 
 // MARK: - UICollectionViewDataSource

@@ -14,6 +14,7 @@
 		EC4A9DC81D5086ED00AB7E99 /* CarouselCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4A9DC71D5086ED00AB7E99 /* CarouselCollectionViewCell.swift */; };
 		ECD1CFE31D51D6CC00D38E5F /* ImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD1CFE21D51D6CC00D38E5F /* ImageManager.swift */; };
 		ECD1CFE91D51FA4800D38E5F /* imageNotFound.png in Resources */ = {isa = PBXBuildFile; fileRef = ECD1CFE81D51FA4800D38E5F /* imageNotFound.png */; };
+		ECD1CFF21D54256D00D38E5F /* placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = ECD1CFF11D54256D00D38E5F /* placeholder.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +38,7 @@
 		EC4A9DC71D5086ED00AB7E99 /* CarouselCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CarouselCollectionViewCell.swift; sourceTree = "<group>"; };
 		ECD1CFE21D51D6CC00D38E5F /* ImageManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageManager.swift; sourceTree = "<group>"; };
 		ECD1CFE81D51FA4800D38E5F /* imageNotFound.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = imageNotFound.png; sourceTree = "<group>"; };
+		ECD1CFF11D54256D00D38E5F /* placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = placeholder.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 		EC4A9DA91D5071B100AB7E99 /* FCCarouselView */ = {
 			isa = PBXGroup;
 			children = (
+				ECD1CFF11D54256D00D38E5F /* placeholder.png */,
 				ECD1CFE81D51FA4800D38E5F /* imageNotFound.png */,
 				EC4A9DAA1D5071B100AB7E99 /* FCCarouselView.h */,
 				EC4A9DAC1D5071B100AB7E99 /* Info.plist */,
@@ -190,6 +193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECD1CFE91D51FA4800D38E5F /* imageNotFound.png in Resources */,
+				ECD1CFF21D54256D00D38E5F /* placeholder.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
