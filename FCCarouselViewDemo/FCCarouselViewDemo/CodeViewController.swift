@@ -36,7 +36,7 @@ class CodeViewController: UIViewController, CarouselViewDelegate {
     
     //MARK: getter
     private lazy var carouselView:CarouselView = {
-        let carouselView = CarouselView(frame: CGRectMake(0,250+64, UIScreen.mainScreen().bounds.width, 200))
+        let carouselView = CarouselView(frame: CGRectMake(0, 64, UIScreen.mainScreen().bounds.width, 200))
         carouselView.delegate = self
         //1
         var carouselData = CarouselData()
