@@ -50,7 +50,7 @@ public class CarouselView: UIView {
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        setupSubView()
+        setupSubView() 
     }
     
     required public init?(coder aDecoder: NSCoder) {
