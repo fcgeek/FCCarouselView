@@ -7,7 +7,7 @@
 ![Platform](https://img.shields.io/cocoapods/p/FCCarouselView.svg?style=flat)
 
 Swift实现的循环轮播，先不哔哔，上图
-[demo](https://github.com/fcgeek/FCCarouselView/blob/master/pic/demo.gif)
+![demo](https://github.com/fcgeek/FCCarouselView/blob/master/pic/demo.gif)
 
 
 `CarouselView` 轮播
