@@ -29,8 +29,6 @@ public enum PageControlOption {
     case Hidden(Bool)
     case IndicatorTintColor(UIColor)
     case CurrentIndicatorTintColor(UIColor)
-    //    public var pageIndicatorTintColor: UIColor? { didSet { pageControl.pageIndicatorTintColor = pageIndicatorTintColor } }
-    //    public var currentPageIndicatorTintColor: UIColor? { didSet { pageControl.currentPageIndicatorTintColor = currentPageIndicatorTintColor } }
 }
 
 public class CarouselView: UIView {
