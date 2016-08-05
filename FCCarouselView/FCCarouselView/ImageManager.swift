@@ -16,7 +16,7 @@ class ImageManager {
     //Memory
     private let memoryCache = NSCache()
     ///The disk cache location.
-    public let diskCachePath: String
+    private let diskCachePath: String
     private let ioQueue: dispatch_queue_t
     private var fileManager: NSFileManager!
     typealias DownloadDoneClosure = (UIImage)->()
@@ -50,7 +50,7 @@ class ImageManager {
         }
         completed(placeholder ?? placeholderImage)
         NSURLSession.sharedSession().dataTaskWithURL(url) { [unowned self](data, response, error) in
-            if let error = error {
+            if error != nil {
                 self.imageUrlNotFound(url, downloadClosure: completed)
                 return
             }
@@ -88,7 +88,7 @@ class ImageManager {
      获取每一帧图片的时长
      */
     private func durationWithSourceAtIndex(source: CGImageSource, index: Int) -> Float {
-        var duration: Float = 0.1
+        let duration: Float = 0.1
         guard let properties = CGImageSourceCopyPropertiesAtIndex(source, index, nil) as? [String: AnyObject] else { return duration }
         guard let gifProperties = properties[kCGImagePropertyGIFDictionary as String] as? [String: AnyObject] else { return duration }
         if let delayTime = gifProperties[kCGImagePropertyGIFUnclampedDelayTime as String] as? NSNumber {

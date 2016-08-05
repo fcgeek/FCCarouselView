@@ -6,7 +6,9 @@ Pod::Spec.new do |s|
   s.license      = "MIT"
   s.authors      = { 'liujianlin' => 'ljlin1520@gmail.com'}
   s.platform     = :ios, "8.0"
-  s.source       = { :git => "https://github.com/fcgeek/FCCarouselView", :tag => s.version }
-  s.source_files = 'FCCarouselView/FCCarouselView/*.{swift,png}', 'FCCarouselView/FCCarouselView.h'
+  s.source       = { :git => "https://github.com/fcgeek/FCCarouselView.git", :tag => s.version }
+  s.source_files = 'FCCarouselView/FCCarouselView/*.swift', 'FCCarouselView/FCCarouselView.h'
+  s.resources = ['FCCarouselView/FCCarouselView/*.png']
+
   s.requires_arc = true
 end
