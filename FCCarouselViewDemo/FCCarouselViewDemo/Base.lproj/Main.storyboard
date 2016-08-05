@@ -16,13 +16,80 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tfU-01-wMt">
+                                <rect key="frame" x="262" y="235" width="77" height="30"/>
+                                <state key="normal" title="StoryBoard"/>
+                                <connections>
+                                    <segue destination="HGj-z6-izE" kind="push" id="kIt-XO-m5b"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4qg-V4-TAF">
+                                <rect key="frame" x="282" y="285" width="37" height="30"/>
+                                <state key="normal" title="Code"/>
+                                <connections>
+                                    <action selector="codeBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jdc-EH-rvr"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OYL-AM-VPE">
+                                <rect key="frame" x="273" y="335" width="54" height="30"/>
+                                <state key="normal" title="Custom"/>
+                                <connections>
+                                    <action selector="customBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="UYg-Qo-9Tt"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="4qg-V4-TAF" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="405-or-ByN"/>
+                            <constraint firstItem="4qg-V4-TAF" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Egs-Pa-xVy"/>
+                            <constraint firstItem="OYL-AM-VPE" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Tpf-CT-a3F"/>
+                            <constraint firstItem="OYL-AM-VPE" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="50" id="UJq-bt-Ssu"/>
+                            <constraint firstItem="tfU-01-wMt" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-50" id="Wo5-1M-K9v"/>
+                            <constraint firstItem="tfU-01-wMt" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="lzv-qW-bGT"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="taC-9F-Sl0"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1054" y="786"/>
+        </scene>
+        <!--Story Board View Controller-->
+        <scene sceneID="0XK-ru-Xnf">
+            <objects>
+                <viewController id="HGj-z6-izE" customClass="StoryBoardViewController" customModule="FCCarouselViewDemo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="cQD-fO-IVp"/>
+                        <viewControllerLayoutGuide type="bottom" id="5nF-H8-kK2"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Y06-Gk-FXD">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nBf-De-Og4" customClass="CarouselView" customModule="FCCarouselView">
+                                <rect key="frame" x="0.0" y="64" width="600" height="200"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="5dl-JB-dTs"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="nBf-De-Og4" secondAttribute="trailing" id="GjN-Vc-Wiu"/>
+                            <constraint firstItem="nBf-De-Og4" firstAttribute="leading" secondItem="Y06-Gk-FXD" secondAttribute="leading" id="cEA-bf-wZn"/>
+                            <constraint firstItem="nBf-De-Og4" firstAttribute="top" secondItem="cQD-fO-IVp" secondAttribute="bottom" id="tJg-IW-ceD"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="Y9L-dY-HmX"/>
+                    <connections>
+                        <outlet property="sbCarouselView" destination="nBf-De-Og4" id="dOI-vB-gQD"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oEk-Nr-iad" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1772" y="786"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="ifT-Vm-BGL">

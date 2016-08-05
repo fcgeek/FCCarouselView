@@ -14,6 +14,10 @@
 		EC4A9D881D50718C00AB7E99 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC4A9D861D50718C00AB7E99 /* LaunchScreen.storyboard */; };
 		EC4A9D931D50718C00AB7E99 /* FCCarouselViewDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4A9D921D50718C00AB7E99 /* FCCarouselViewDemoTests.swift */; };
 		EC4A9DC61D50753800AB7E99 /* FCCarouselView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4A9DC51D50753800AB7E99 /* FCCarouselView.framework */; };
+		ECD1CFF41D54369600D38E5F /* StoryBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD1CFF31D54369600D38E5F /* StoryBoardViewController.swift */; };
+		ECD1CFF61D5436A700D38E5F /* CodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD1CFF51D5436A700D38E5F /* CodeViewController.swift */; };
+		ECD1CFF81D5436BC00D38E5F /* CustomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD1CFF71D5436BC00D38E5F /* CustomViewController.swift */; };
+		ECD1CFFA1D543EBB00D38E5F /* CustomCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD1CFF91D543EBB00D38E5F /* CustomCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +42,10 @@
 		EC4A9D921D50718C00AB7E99 /* FCCarouselViewDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FCCarouselViewDemoTests.swift; sourceTree = "<group>"; };
 		EC4A9D941D50718C00AB7E99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EC4A9DC51D50753800AB7E99 /* FCCarouselView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FCCarouselView.framework; path = "../../../../Build/FCCarouselView-arqulobtuzcqezhfbqfdvjmmqdnq/Build/Products/Debug-iphonesimulator/FCCarouselView.framework"; sourceTree = "<group>"; };
+		ECD1CFF31D54369600D38E5F /* StoryBoardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryBoardViewController.swift; sourceTree = "<group>"; };
+		ECD1CFF51D5436A700D38E5F /* CodeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodeViewController.swift; sourceTree = "<group>"; };
+		ECD1CFF71D5436BC00D38E5F /* CustomViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomViewController.swift; sourceTree = "<group>"; };
+		ECD1CFF91D543EBB00D38E5F /* CustomCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +95,10 @@
 				EC4A9D841D50718C00AB7E99 /* Assets.xcassets */,
 				EC4A9D861D50718C00AB7E99 /* LaunchScreen.storyboard */,
 				EC4A9D891D50718C00AB7E99 /* Info.plist */,
+				ECD1CFF31D54369600D38E5F /* StoryBoardViewController.swift */,
+				ECD1CFF51D5436A700D38E5F /* CodeViewController.swift */,
+				ECD1CFF71D5436BC00D38E5F /* CustomViewController.swift */,
+				ECD1CFF91D543EBB00D38E5F /* CustomCollectionViewCell.swift */,
 			);
 			path = FCCarouselViewDemo;
 			sourceTree = "<group>";
@@ -202,7 +214,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC4A9D801D50718C00AB7E99 /* ViewController.swift in Sources */,
+				ECD1CFFA1D543EBB00D38E5F /* CustomCollectionViewCell.swift in Sources */,
+				ECD1CFF61D5436A700D38E5F /* CodeViewController.swift in Sources */,
+				ECD1CFF81D5436BC00D38E5F /* CustomViewController.swift in Sources */,
 				EC4A9D7E1D50718C00AB7E99 /* AppDelegate.swift in Sources */,
+				ECD1CFF41D54369600D38E5F /* StoryBoardViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

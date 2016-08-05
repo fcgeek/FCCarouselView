@@ -9,12 +9,16 @@
 import UIKit
 
 @objc public protocol CarouselViewDelegate: class {
-    optional func carouselView(view:CarouselView, cellForItemAtIndex index:NSInteger) -> UICollectionViewCell
+    optional func carouselView(view:CarouselView, indexCell cell:UICollectionViewCell, cellAtIndex index:NSInteger)
     optional func carouselView(view:CarouselView, didSelectItemAtIndex index:NSInteger)
 }
 
 public struct CarouselData {
-    public init() {}
+    public init(image:UIImage? = nil, imageURL:NSURL? = nil, detail:String? = nil) {
+        self.image = image
+        self.imageURL = imageURL
+        self.detail = detail
+    }
     public var image: UIImage!
     public var imageURL: NSURL!
     public var detail: String!
@@ -33,11 +37,16 @@ public enum PageControlOption {
 
 public class CarouselView: UIView {
     
-    public weak var delegate:CarouselViewDelegate?
-    private var pageCount = 0
-    private var timeInterval:NSTimeInterval = 3
-    private var timer: NSTimer?
+    @IBOutlet public weak var delegate:CarouselViewDelegate?
     public var placeholderImage:UIImage?
+    
+    private var pageCount = 0
+    private var timeInterval: NSTimeInterval = 3
+    private var timer: NSTimer?
+    private var enableAutoScroll = true
+    private var isFirstLayout = true
+    private var currentIndexPath: NSIndexPath?
+    private var customCellReuseIdentifier: String?
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
@@ -47,6 +56,12 @@ public class CarouselView: UIView {
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setupSubView()
+    }
+    
+    public override func willMoveToSuperview(newSuperview: UIView?) {
+        if newSuperview == nil {
+            timer?.invalidate()
+        }
     }
     
     private func setupSubView() {
@@ -59,10 +74,12 @@ public class CarouselView: UIView {
         super.layoutSubviews()
         collectionView.frame = bounds
         let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout
-        layout?.itemSize = bounds.size        
+        layout?.itemSize = bounds.size
+        collectionView.scrollToItemAtIndexPath(NSIndexPath(forRow: pageControl.currentPage+1, inSection: 0), atScrollPosition: .None, animated: false)
     }
     
     private func startTimer() {
+        if !enableAutoScroll { return }
         timer?.invalidate()
         timer = NSTimer(timeInterval: timeInterval, target: self, selector: #selector(scrollNextPage), userInfo: nil, repeats: true)
         NSRunLoop.mainRunLoop().addTimer(timer!, forMode: NSRunLoopCommonModes)
@@ -74,7 +91,8 @@ public class CarouselView: UIView {
     }
     
     public func registerClass(cellClass: AnyClass) {
-        collectionView.registerClass(cellClass, forCellWithReuseIdentifier: NSStringFromClass(cellClass))
+        customCellReuseIdentifier = NSStringFromClass(cellClass)
+        collectionView.registerClass(cellClass, forCellWithReuseIdentifier: customCellReuseIdentifier!)
     }
     
     //MARK: getter
@@ -92,7 +110,6 @@ public class CarouselView: UIView {
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.registerClass(CarouselCollectionViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(CarouselCollectionViewCell))
-        collectionView.contentOffset.x = self.bounds.width
         return collectionView
     }()
     
@@ -109,9 +126,9 @@ public class CarouselView: UIView {
     }()
     
     //MARK: setter
-    public var carouselDatas = [CarouselData]() {
+    public var dataSource = [Any]() {
         didSet {
-            pageCount = carouselDatas.count
+            pageCount = dataSource.count
             pageControl.numberOfPages = pageCount
         }
     }
@@ -119,19 +136,18 @@ public class CarouselView: UIView {
     public var autoScrollOptions: [AutoScrollOption]? {
         didSet {
             timer?.invalidate()
-            var enable = true
             if let options = autoScrollOptions {
                 options.forEach({ (option) in
                     switch option {
                     case let .Enable(value):
-                        enable = value
+                        enableAutoScroll = value
                         
                     case let .TimeInterval(value):
                         timeInterval = value
                     }
                 })
             }
-            if enable {
+            if enableAutoScroll {
                 startTimer()
             }
         }
@@ -166,11 +182,15 @@ extension CarouselView: UICollectionViewDataSource {
     
     public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let index = getIndexWithIndexPath(indexPath)
-        if let cell = delegate?.carouselView?(self, cellForItemAtIndex: index) {
+        if let customCellReuseIdentifier = customCellReuseIdentifier {
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier(customCellReuseIdentifier, forIndexPath: indexPath)
+            delegate?.carouselView?(self, indexCell: cell, cellAtIndex: index)
             return cell
         }
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(CarouselCollectionViewCell), forIndexPath: indexPath) as! CarouselCollectionViewCell
-        cell.carouselData = carouselDatas[index]
+        if let carouselData = dataSource[index] as? CarouselData {
+            cell.carouselData = carouselData
+        }
         return cell
     }
     
