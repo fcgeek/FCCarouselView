@@ -34,18 +34,18 @@ class CustomViewController: UIViewController, CarouselViewDelegate {
         print(index)
     }
     
-    func carouselView(view: CarouselView, indexCell cell: UICollectionViewCell, cellAtIndex index: NSInteger) {
-        if let customCell = cell as? CustomCollectionViewCell {
-            if let detail = carouselView.dataSource[index] as? String {
-                customCell.detailLabel.text = detail
-            }
+    func carouselView(view: CarouselView, cellAtIndex index: NSInteger) -> UICollectionViewCell {
+        let customCell = carouselView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(CustomCollectionViewCell), forIndex: index) as! CustomCollectionViewCell
+        if let detail = carouselView.dataSource[index] as? String {
+            customCell.detailLabel.text = detail
         }
+        return customCell
     }
     
     //MARK: getter
     private lazy var carouselView:CarouselView = {
         let carouselView = CarouselView(frame: CGRectMake(0, 64, UIScreen.mainScreen().bounds.width, 200))
-        carouselView.registerClass(CustomCollectionViewCell)
+        carouselView.registerClass(CustomCollectionViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(CustomCollectionViewCell))
         carouselView.delegate = self
         //1
         carouselView.dataSource = ["I created a swift class with string optionals (String?) and instantiated the class in a different swift file and got a compile error.",

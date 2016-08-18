@@ -32,11 +32,6 @@ class CarouselCollectionViewCell: UICollectionViewCell {
         imageView.frame = bounds
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        imageView.image = nil
-    }
-    
     //MARK: getter
     private let imageView: UIImageView = {
         let imageView = UIImageView()

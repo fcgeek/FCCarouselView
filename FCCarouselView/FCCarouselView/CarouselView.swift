@@ -9,7 +9,7 @@
 import UIKit
 
 @objc public protocol CarouselViewDelegate: class {
-    optional func carouselView(view:CarouselView, indexCell cell:UICollectionViewCell, cellAtIndex index:NSInteger)
+    optional func carouselView(view:CarouselView, cellAtIndex index:NSInteger) -> UICollectionViewCell
     optional func carouselView(view:CarouselView, didSelectItemAtIndex index:NSInteger)
 }
 
@@ -45,8 +45,6 @@ public class CarouselView: UIView {
     private var timer: NSTimer?
     private var enableAutoScroll = true
     private var isFirstLayout = true
-    private var currentIndexPath: NSIndexPath?
-    private var customCellReuseIdentifier: String?
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
@@ -93,10 +91,15 @@ public class CarouselView: UIView {
         collectionView.setContentOffset(CGPoint(x: nextPageOffsetX, y:0), animated: true)
     }
     
-    public func registerClass(cellClass: AnyClass) {
-        customCellReuseIdentifier = NSStringFromClass(cellClass)
-        collectionView.registerClass(cellClass, forCellWithReuseIdentifier: customCellReuseIdentifier!)
+    //MARK: - like UICollectionView
+    public func registerClass(cellClass: AnyClass?, forCellWithReuseIdentifier identifier: String) {
+        collectionView.registerClass(cellClass, forCellWithReuseIdentifier: identifier)
     }
+    
+    public func dequeueReusableCellWithReuseIdentifier(identifier: String, forIndex index: Int) -> UICollectionViewCell {
+        return collectionView.dequeueReusableCellWithReuseIdentifier(identifier, forIndexPath: NSIndexPath(forRow: index, inSection: 0))
+    }
+    
     
     //MARK: getter
     private lazy var collectionView: UICollectionView = {
@@ -185,9 +188,7 @@ extension CarouselView: UICollectionViewDataSource {
     
     public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let index = getIndexWithIndexPath(indexPath)
-        if let customCellReuseIdentifier = customCellReuseIdentifier {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier(customCellReuseIdentifier, forIndexPath: indexPath)
-            delegate?.carouselView?(self, indexCell: cell, cellAtIndex: index)
+        if let cell = delegate?.carouselView?(self, cellAtIndex: index) {
             return cell
         }
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(CarouselCollectionViewCell), forIndexPath: indexPath) as! CarouselCollectionViewCell

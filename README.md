@@ -99,22 +99,22 @@ sbCarouselView.pageControlOptions = [.IndicatorTintColor(UIColor.greenColor())
 ###CarouselViewDelegate
 ```Swift
 //自定义Cell时才使用到
-optional public func carouselView(view: FCCarouselView.CarouselView, indexCell cell: UICollectionViewCell, cellAtIndex index: NSInteger)
+optional func carouselView(view:CarouselView, cellAtIndex index:NSInteger) -> UICollectionViewCell
 //点击事件
 optional public func carouselView(view: FCCarouselView.CarouselView, didSelectItemAtIndex index: NSInteger)
 ```  
-###Custom Cell
+###Custom Cell Like UICollectionDelegate
 ```Swift
 //step 1 registerClass
-carouselView.registerClass(CustomCollectionViewCell)
+carouselView.registerClass(CustomCollectionViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(CustomCollectionViewCell))
 
 //step 2 
-func carouselView(view: CarouselView, indexCell cell: UICollectionViewCell, cellAtIndex index: NSInteger) {
-  if let customCell = cell as? CustomCollectionViewCell {
+func carouselView(view: CarouselView, cellAtIndex index: NSInteger) -> UICollectionViewCell {
+    let customCell = carouselView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(CustomCollectionViewCell), forIndex: index) as! CustomCollectionViewCell
     if let detail = carouselView.dataSource[index] as? String {
         customCell.detailLabel.text = detail
     }
-  }
+    return customCell
 }
 ```  
 
