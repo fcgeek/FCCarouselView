@@ -21,7 +21,7 @@ class CarouselCollectionViewCell: UICollectionViewCell {
         super.init(coder: aDecoder)
     }
     
-    private func setupSubView() {
+    fileprivate func setupSubView() {
         contentView.addSubview(imageView)
         contentView.addSubview(detailMaskView)
         detailMaskView.addSubview(detailLabel)
@@ -33,21 +33,21 @@ class CarouselCollectionViewCell: UICollectionViewCell {
     }
     
     //MARK: getter
-    private let imageView: UIImageView = {
+    fileprivate let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .ScaleToFill
+        imageView.contentMode = .scaleToFill
         return imageView
     }()
     
-    private let detailLabel: UILabel = {
+    fileprivate let detailLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.whiteColor()
+        label.textColor = UIColor.white
         label.numberOfLines = 3
-        label.lineBreakMode = .ByTruncatingTail
+        label.lineBreakMode = .byTruncatingTail
         return label
     }()
     
-    private let detailMaskView: UIView = {
+    fileprivate let detailMaskView: UIView = {
         let maskView = UIView()
         maskView.backgroundColor = UIColor(white: 0, alpha: 0.7)
         return maskView
@@ -64,7 +64,7 @@ class CarouselCollectionViewCell: UICollectionViewCell {
                     })
             }
             if let detail = carouselData.detail {
-                detailMaskView.hidden = false
+                detailMaskView.isHidden = false
                 detailLabel.text = detail
                 let labelMargin:CGFloat = 12
                 let maskViewHeight = detailLabel.sizeThatFits(CGSize(width: bounds.size.width-labelMargin*2, height: bounds.size.height)).height + 20
@@ -72,7 +72,7 @@ class CarouselCollectionViewCell: UICollectionViewCell {
                 detailLabel.frame = CGRect(x: labelMargin, y: 0, width: detailMaskView.bounds.width-labelMargin*2, height: detailMaskView.bounds.height)
                 
             } else {
-                detailMaskView.hidden = true
+                detailMaskView.isHidden = true
             }
         }
     }

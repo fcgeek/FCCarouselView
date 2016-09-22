@@ -9,42 +9,42 @@
 import UIKit
 
 @objc public protocol CarouselViewDelegate: class {
-    optional func carouselView(view:CarouselView, cellAtIndex index:NSInteger) -> UICollectionViewCell
-    optional func carouselView(view:CarouselView, didSelectItemAtIndex index:NSInteger)
+    @objc optional func carouselView(_ view:CarouselView, cellAtIndex index:NSInteger) -> UICollectionViewCell
+    @objc optional func carouselView(_ view:CarouselView, didSelectItemAtIndex index:NSInteger)
 }
 
 public struct CarouselData {
-    public init(image:UIImage? = nil, imageURL:NSURL? = nil, detail:String? = nil) {
+    public init(image:UIImage? = nil, imageURL:URL? = nil, detail:String? = nil) {
         self.image = image
         self.imageURL = imageURL
         self.detail = detail
     }
     public var image: UIImage!
-    public var imageURL: NSURL!
+    public var imageURL: URL!
     public var detail: String!
 }
 
 public enum AutoScrollOption {
-    case Enable(Bool)
-    case TimeInterval(NSTimeInterval)
+    case enable(Bool)
+    case timeInterval(Foundation.TimeInterval)
 }
 
 public enum PageControlOption {
-    case Hidden(Bool)
-    case IndicatorTintColor(UIColor)
-    case CurrentIndicatorTintColor(UIColor)
+    case hidden(Bool)
+    case indicatorTintColor(UIColor)
+    case currentIndicatorTintColor(UIColor)
 }
 
-public class CarouselView: UIView {
+open class CarouselView: UIView {
     
-    @IBOutlet public weak var delegate:CarouselViewDelegate?
-    public var placeholderImage:UIImage?
+    @IBOutlet open weak var delegate:CarouselViewDelegate?
+    open var placeholderImage:UIImage?
     
-    private var pageCount = 0
-    private var timeInterval: NSTimeInterval = 3
-    private var timer: NSTimer?
-    private var enableAutoScroll = true
-    private var isFirstLayout = true
+    fileprivate var pageCount = 0
+    fileprivate var timeInterval: TimeInterval = 3
+    fileprivate var timer: Timer?
+    fileprivate var enableAutoScroll = true
+    fileprivate var isFirstLayout = true
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
@@ -56,34 +56,34 @@ public class CarouselView: UIView {
         setupSubView()
     }
     
-    public override func willMoveToSuperview(newSuperview: UIView?) {
+    open override func willMove(toSuperview newSuperview: UIView?) {
         if newSuperview == nil {
             timer?.invalidate()
         }
     }
     
-    private func setupSubView() {
+    fileprivate func setupSubView() {
         addSubview(collectionView)
         addSubview(pageControl)
         startTimer()
     }
     
-    public override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         collectionView.frame = bounds
         let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout
         layout?.itemSize = bounds.size
-        collectionView.scrollToItemAtIndexPath(NSIndexPath(forRow: pageControl.currentPage+1, inSection: 0), atScrollPosition: .None, animated: false)
-        let size = pageControl.sizeForNumberOfPages(pageControl.numberOfPages)
+        collectionView.scrollToItem(at: IndexPath(row: pageControl.currentPage+1, section: 0), at: UICollectionViewScrollPosition(), animated: false)
+        let size = pageControl.size(forNumberOfPages: pageControl.numberOfPages)
         pageControl.frame.size.height = size.height
         pageControl.frame.origin.y = self.bounds.height - size.height
     }
     
-    private func startTimer() {
+    fileprivate func startTimer() {
         if !enableAutoScroll { return }
         timer?.invalidate()
-        timer = NSTimer(timeInterval: timeInterval, target: self, selector: #selector(scrollNextPage), userInfo: nil, repeats: true)
-        NSRunLoop.mainRunLoop().addTimer(timer!, forMode: NSRunLoopCommonModes)
+        timer = Timer(timeInterval: timeInterval, target: self, selector: #selector(scrollNextPage), userInfo: nil, repeats: true)
+        RunLoop.main.add(timer!, forMode: RunLoopMode.commonModes)
     }
     
     func scrollNextPage() {
@@ -92,63 +92,63 @@ public class CarouselView: UIView {
     }
     
     //MARK: - like UICollectionView
-    public func registerClass(cellClass: AnyClass?, forCellWithReuseIdentifier identifier: String) {
-        collectionView.registerClass(cellClass, forCellWithReuseIdentifier: identifier)
+    open func registerClass(_ cellClass: AnyClass?, forCellWithReuseIdentifier identifier: String) {
+        collectionView.register(cellClass, forCellWithReuseIdentifier: identifier)
     }
     
-    public func dequeueReusableCellWithReuseIdentifier(identifier: String, forIndex index: Int) -> UICollectionViewCell {
-        return collectionView.dequeueReusableCellWithReuseIdentifier(identifier, forIndexPath: NSIndexPath(forRow: index, inSection: 0))
+    open func dequeueReusableCellWithReuseIdentifier(_ identifier: String, forIndex index: Int) -> UICollectionViewCell {
+        return collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: IndexPath(row: index, section: 0))
     }
     
     
     //MARK: getter
-    private lazy var collectionView: UICollectionView = {
+    fileprivate lazy var collectionView: UICollectionView = {
         let flowLayout =  UICollectionViewFlowLayout()
         flowLayout.itemSize = self.bounds.size
         flowLayout.minimumLineSpacing = 0
-        flowLayout.scrollDirection = .Horizontal        
+        flowLayout.scrollDirection = .horizontal        
         
         let collectionView = UICollectionView(frame: self.bounds, collectionViewLayout: flowLayout)
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.bounces = false
-        collectionView.pagingEnabled = true
+        collectionView.isPagingEnabled = true
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.registerClass(CarouselCollectionViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(CarouselCollectionViewCell))
+        collectionView.register(CarouselCollectionViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(CarouselCollectionViewCell))
         return collectionView
     }()
     
-    private lazy var pageControl: UIPageControl = {
+    fileprivate lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl(frame: self.bounds)
-        pageControl.pageIndicatorTintColor = UIColor.redColor()
-        pageControl.currentPageIndicatorTintColor = UIColor.whiteColor()
+        pageControl.pageIndicatorTintColor = UIColor.red
+        pageControl.currentPageIndicatorTintColor = UIColor.white
         pageControl.numberOfPages = self.pageCount
-        pageControl.userInteractionEnabled = false
-        let size = pageControl.sizeForNumberOfPages(pageControl.numberOfPages)
+        pageControl.isUserInteractionEnabled = false
+        let size = pageControl.size(forNumberOfPages: pageControl.numberOfPages)
         pageControl.frame.size.height = size.height
         pageControl.frame.origin.y = self.bounds.height - size.height
         return pageControl
     }()
     
     //MARK: setter
-    public var dataSource = [Any]() {
+    open var dataSource = [Any]() {
         didSet {
             pageCount = dataSource.count
             pageControl.numberOfPages = pageCount
         }
     }
     
-    public var autoScrollOptions: [AutoScrollOption]? {
+    open var autoScrollOptions: [AutoScrollOption]? {
         didSet {
             timer?.invalidate()
             if let options = autoScrollOptions {
                 options.forEach({ (option) in
                     switch option {
-                    case let .Enable(value):
+                    case let .enable(value):
                         enableAutoScroll = value
                         
-                    case let .TimeInterval(value):
+                    case let .timeInterval(value):
                         timeInterval = value
                     }
                 })
@@ -159,18 +159,18 @@ public class CarouselView: UIView {
         }
     }
     
-    public var pageControlOptions: [PageControlOption]? {
+    open var pageControlOptions: [PageControlOption]? {
         didSet {
             if let options = pageControlOptions {
                 options.forEach({ (option) in
                     switch option {
-                    case let .Hidden(value):
-                        pageControl.hidden = value
+                    case let .hidden(value):
+                        pageControl.isHidden = value
                         
-                    case let .IndicatorTintColor(value):
+                    case let .indicatorTintColor(value):
                         pageControl.pageIndicatorTintColor = value
                         
-                    case let .CurrentIndicatorTintColor(value):
+                    case let .currentIndicatorTintColor(value):
                         pageControl.currentPageIndicatorTintColor = value
                     }
                 })
@@ -182,32 +182,32 @@ public class CarouselView: UIView {
 // MARK: - UICollectionViewDataSource
 extension CarouselView: UICollectionViewDataSource {
     
-    public func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return pageCount > 1 ? pageCount+2 : pageCount
     }
     
-    public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let index = getIndexWithIndexPath(indexPath)
         if let cell = delegate?.carouselView?(self, cellAtIndex: index) {
             return cell
         }
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(CarouselCollectionViewCell), forIndexPath: indexPath) as! CarouselCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(CarouselCollectionViewCell), for: indexPath) as! CarouselCollectionViewCell
         if let carouselData = dataSource[index] as? CarouselData {
             cell.carouselData = carouselData
         }
         return cell
     }
     
-    private func getIndexWithIndexPath(indexPath:NSIndexPath) -> Int {
-        var index = indexPath.row
-        if indexPath.row < 1 {
+    fileprivate func getIndexWithIndexPath(_ indexPath:IndexPath) -> Int {
+        var index = (indexPath as NSIndexPath).row
+        if (indexPath as NSIndexPath).row < 1 {
             index = pageCount-1
             
-        } else if indexPath.row > pageCount {
+        } else if (indexPath as NSIndexPath).row > pageCount {
             index = 0
             
         } else {
-            index = indexPath.row-1
+            index = (indexPath as NSIndexPath).row-1
         }
         return index
     }
@@ -215,30 +215,30 @@ extension CarouselView: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 extension CarouselView: UICollectionViewDelegate {
-    public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.carouselView?(self, didSelectItemAtIndex: getIndexWithIndexPath(indexPath))
     }
     
-    public func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         timer?.invalidate()
     }
     
-    public func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         startTimer()
     }
     
-    public func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         calculatePage()
     }
     
-    public func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
+    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         calculatePage()
     }
     
     /**
      计算页，循环
      */
-    private func calculatePage() {
+    fileprivate func calculatePage() {
         let realCurrentPage = Int(collectionView.contentOffset.x/collectionView.frame.width)
         if realCurrentPage < 1 {
             pageControl.currentPage = pageCount - 1

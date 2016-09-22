@@ -14,42 +14,42 @@ class ImageManager {
     
     static let shareManager = ImageManager()
     //Memory
-    private let memoryCache = NSCache()
+    fileprivate let memoryCache = NSCache<AnyObject, AnyObject>()
     ///The disk cache location.
-    private let diskCachePath: String
-    private let ioQueue: dispatch_queue_t
-    private var fileManager: NSFileManager!
+    fileprivate let diskCachePath: String
+    fileprivate let ioQueue: DispatchQueue
+    fileprivate var fileManager: FileManager!
     typealias DownloadDoneClosure = (UIImage)->()
     
     init() {
         let cacheName = "FCCarouselView.ImageManager.memoryCache.by.liujianlin"
         memoryCache.name = cacheName
         memoryCache.countLimit = 20
-        let dstPath = NSSearchPathForDirectoriesInDomains(.CachesDirectory, NSSearchPathDomainMask.UserDomainMask, true).first!
-        diskCachePath = (dstPath as NSString).stringByAppendingPathComponent(cacheName)
-        ioQueue = dispatch_queue_create("\(cacheName).ioQueue", DISPATCH_QUEUE_SERIAL)
-        dispatch_sync(ioQueue, { () -> Void in
-            self.fileManager = NSFileManager()
+        let dstPath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).first!
+        diskCachePath = (dstPath as NSString).appendingPathComponent(cacheName)
+        ioQueue = DispatchQueue(label: "\(cacheName).ioQueue", attributes: [])
+        ioQueue.sync(execute: { () -> Void in
+            self.fileManager = FileManager()
         })
     }
     
-    func downloadImageWithURL(url: NSURL, placeholder: UIImage?, downloadDoneClosure: DownloadDoneClosure) {
-        func completed(image:UIImage) {
-            dispatch_async(dispatch_get_main_queue()) { 
+    func downloadImageWithURL(_ url: URL, placeholder: UIImage?, downloadDoneClosure: @escaping DownloadDoneClosure) {
+        func completed(_ image:UIImage) {
+            DispatchQueue.main.async { 
                 downloadDoneClosure(image)
             }
         }
-        if let image = memoryCache.objectForKey(url.absoluteString) as? UIImage {
+        if let image = memoryCache.object(forKey: url.absoluteString as AnyObject) as? UIImage {
             completed(image)
             return
             
         } else if let image = diskImageForKey(url.absoluteString) {
-            memoryCache.setObject(image, forKey: url.absoluteString)
+            memoryCache.setObject(image, forKey: url.absoluteString as AnyObject)
             completed(image)
             return
         }
         completed(placeholder ?? placeholderImage)
-        NSURLSession.sharedSession().dataTaskWithURL(url) { [unowned self](data, response, error) in
+        URLSession.shared.dataTask(with: url, completionHandler: { [unowned self](data, response, error) in
             if error != nil {
                 self.imageUrlNotFound(url, downloadClosure: completed)
                 return
@@ -62,11 +62,11 @@ class ImageManager {
             self.storeImage(image, forKey: url.absoluteString)
             completed(image)
             
-            }.resume()
+            }) .resume()
     }
     
-    private func getImageWithData(data:NSData) -> UIImage? {
-        guard let imageSource = CGImageSourceCreateWithData(data, nil) else { return nil }
+    fileprivate func getImageWithData(_ data:Data) -> UIImage? {
+        guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else { return nil }
         let count = CGImageSourceGetCount(imageSource)
         if count > 1 {
             var images = [UIImage]()
@@ -74,10 +74,10 @@ class ImageManager {
             for index in 0...count {
                 guard let cgImage = CGImageSourceCreateImageAtIndex(imageSource, index, nil) else { continue }
                 duration += durationWithSourceAtIndex(imageSource, index: index)
-                images.append(UIImage(CGImage: cgImage))
+                images.append(UIImage(cgImage: cgImage))
             }
             if duration.isZero { duration = 0.1*Float(count) }
-            return UIImage.animatedImageWithImages(images, duration: NSTimeInterval(duration))
+            return UIImage.animatedImage(with: images, duration: TimeInterval(duration))
             
         } else {
             return UIImage(data: data)
@@ -87,7 +87,7 @@ class ImageManager {
     /**
      获取每一帧图片的时长
      */
-    private func durationWithSourceAtIndex(source: CGImageSource, index: Int) -> Float {
+    fileprivate func durationWithSourceAtIndex(_ source: CGImageSource, index: Int) -> Float {
         let duration: Float = 0.1
         guard let properties = CGImageSourceCopyPropertiesAtIndex(source, index, nil) as? [String: AnyObject] else { return duration }
         guard let gifProperties = properties[kCGImagePropertyGIFDictionary as String] as? [String: AnyObject] else { return duration }
@@ -103,8 +103,8 @@ class ImageManager {
     /**
      找不到图片或者图片有问题
      */
-    private func imageUrlNotFound(url:NSURL, downloadClosure: DownloadDoneClosure) {
-        memoryCache.setObject(notFoundImage, forKey: url.absoluteString)
+    fileprivate func imageUrlNotFound(_ url:URL, downloadClosure: DownloadDoneClosure) {
+        memoryCache.setObject(notFoundImage, forKey: url.absoluteString as AnyObject)
         downloadClosure(notFoundImage)
     }
     
@@ -115,17 +115,17 @@ class ImageManager {
      - parameter originalData:      The original data of the image.
      - parameter key:               Key for the image.
      */
-    private func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String) {
-        memoryCache.setObject(image, forKey: key)
-        dispatch_async(ioQueue, {
+    fileprivate func storeImage(_ image: UIImage, originalData: Data? = nil, forKey key: String) {
+        memoryCache.setObject(image, forKey: key as AnyObject)
+        ioQueue.async(execute: {
             if let data = originalData {
-                if !self.fileManager.fileExistsAtPath(self.diskCachePath) {
+                if !self.fileManager.fileExists(atPath: self.diskCachePath) {
                     do {
-                        try self.fileManager.createDirectoryAtPath(self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
+                        try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
                     } catch _ {}
                 }
                 
-                self.fileManager.createFileAtPath(self.cachePathForKey(key), contents: data, attributes: nil)
+                self.fileManager.createFile(atPath: self.cachePathForKey(key), contents: data, attributes: nil)
             }
         })
     }
@@ -133,28 +133,28 @@ class ImageManager {
     /**
      从手机储存中拿图片
      */
-    private func diskImageForKey(key: String) -> UIImage? {
+    fileprivate func diskImageForKey(_ key: String) -> UIImage? {
         let filePath = cachePathForKey(key)
-        guard let data = NSData(contentsOfFile: filePath) else { return nil }
+        guard let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)) else { return nil }
         return UIImage(data: data)
     }
     
-    private func cachePathForKey(key: String) -> String {
-        return (diskCachePath as NSString).stringByAppendingPathComponent(key)
+    fileprivate func cachePathForKey(_ key: String) -> String {
+        return (diskCachePath as NSString).appendingPathComponent(key)
     }
     
     //MARK: getter
     /// 找不到图片
-    private let notFoundImage: UIImage = {
-        let frameworkBundle = NSBundle(forClass: FCCarouselView.ImageManager.self)
-        let imagePath = frameworkBundle.pathForResource("imageNotFound", ofType: "png")!
+    fileprivate let notFoundImage: UIImage = {
+        let frameworkBundle = Bundle(for: FCCarouselView.ImageManager.self)
+        let imagePath = frameworkBundle.path(forResource: "imageNotFound", ofType: "png")!
         return UIImage(contentsOfFile: imagePath)!
     }()
     
     
-    private let placeholderImage: UIImage = {
-        let frameworkBundle = NSBundle(forClass: FCCarouselView.ImageManager.self)
-        let imagePath = frameworkBundle.pathForResource("placeholder", ofType: "png")!
+    fileprivate let placeholderImage: UIImage = {
+        let frameworkBundle = Bundle(for: FCCarouselView.ImageManager.self)
+        let imagePath = frameworkBundle.path(forResource: "placeholder", ofType: "png")!
         return UIImage(contentsOfFile: imagePath)!
     }()
 }
