@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "FCCarouselView"
-  s.version      = "1.0.4"
+  s.version      = "1.0.5"
   s.summary      = "This library is implemented Swift cycle carousel"
   s.homepage     = "http://www.fcgeek.com"
   s.license      = "MIT"
