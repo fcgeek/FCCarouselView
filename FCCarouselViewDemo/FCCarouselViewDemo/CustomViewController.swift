@@ -34,9 +34,9 @@ class CustomViewController: UIViewController, CarouselViewDelegate {
         print(index)
     }
     
-    func carouselView(_ view: CarouselView, cellAtIndex index: NSInteger) -> UICollectionViewCell {
-        let customCell = carouselView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(CustomCollectionViewCell.self), forIndex: index) as! CustomCollectionViewCell
-        if let detail = carouselView.dataSource[index] as? String {
+    func carouselView(_ view: CarouselView, cellAtIndexPath indexPath: IndexPath, pageIndex: Int) -> UICollectionViewCell {
+        let customCell = carouselView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(CustomCollectionViewCell.self), forIndex: pageIndex) as! CustomCollectionViewCell
+        if let detail = carouselView.dataSource[pageIndex] as? String {
             customCell.detailLabel.text = detail
         }
         return customCell

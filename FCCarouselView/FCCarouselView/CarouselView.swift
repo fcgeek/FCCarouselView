@@ -25,8 +25,8 @@ public struct CarouselData {
 }
 
 public enum AutoScrollOption {
-    case enable(Bool)
-    case timeInterval(Foundation.TimeInterval)
+    case enable(Bool)   //是否开启自动轮播，默认开启
+    case timeInterval(Foundation.TimeInterval)  //轮播频率
 }
 
 public enum PageControlOption {

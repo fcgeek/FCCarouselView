@@ -16,8 +16,8 @@ Swift实现的循环轮播
 ![demo](https://github.com/fcgeek/FCCarouselView/blob/master/pic/demo.gif)  
 #Requirements
  - iOS 8+  
- - Swift 2.2  
- - Xcode 7.3 
+ - Swift 3.0.1  
+ - Xcode 8.2.1 
 
 #Installation  
 
@@ -42,76 +42,80 @@ import FCCarouselView
 
 //step 2
 //MARK: getter 懒加载
-private lazy var carouselView:CarouselView = {
-  let carouselView = CarouselView(frame: CGRectMake(0, 64, UIScreen.mainScreen().bounds.width, 200))
-  //1
-  var carouselData = CarouselData()
-  carouselData.image = UIImage(named: "1")
-  carouselData.detail = "I created a swift class with string optionals (String?) and instantiated the class in a different swift file and got a compile error."
-  carouselView.dataSource.append(carouselData)
-  //2
-  carouselData = CarouselData()
-  carouselData.imageURL = NSURL(string: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSMFynE3clrgzCU2ZDw9SDn5gM2JuwEsCE37Qf4S6uBlJljejEYWg")
-  carouselData.detail = "When I instantiate the class"
-  carouselView.dataSource.append(carouselData)
-  //3
-  carouselData = CarouselData()
-  carouselData.image = UIImage(named: "3")
-  carouselView.dataSource.append(carouselData)
-  //4
-  carouselData = CarouselData()
-  carouselData.imageURL = NSURL(string: "https://g.twimg.com/blog/blog/image/Cat-party.gif")
-  carouselData.detail = "If the var item = ShoppingListItem() is done in the appDelegate.swift, from the function application:didFinishLaunchingWithOptions we get the error"
-  carouselView.dataSource.append(carouselData)
-  //5
-  carouselData = CarouselData()
-  carouselData.imageURL = NSURL(string: "https://www.baidu.com/123")
-  carouselData.detail = "<class> cannot be initialised because it has no accessible initializers"
-  carouselView.dataSource.append(carouselData)
-  return carouselView
+fileprivate lazy var carouselView:CarouselView = {
+    let carouselView = CarouselView(frame: CGRect(x: 0, y: 64, width: UIScreen.main.bounds.width, height: 200))
+    carouselView.delegate = self
+    //1
+    var carouselData = CarouselData()
+    carouselData.image = UIImage(named: "1")
+    carouselData.detail = "I created a swift class with string optionals (String?) and instantiated the class in a different swift file and got a compile error."
+    carouselView.dataSource.append(carouselData)
+    //2
+    carouselData = CarouselData()
+    carouselData.imageURL = URL(string: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSMFynE3clrgzCU2ZDw9SDn5gM2JuwEsCE37Qf4S6uBlJljejEYWg")
+    carouselData.detail = "When I instantiate the class"
+    carouselView.dataSource.append(carouselData)
+    //3
+    carouselData = CarouselData()
+    carouselData.image = UIImage(named: "3")
+    carouselView.dataSource.append(carouselData)
+    //4
+    carouselData = CarouselData()
+    carouselData.imageURL = URL(string: "https://g.twimg.com/blog/blog/image/Cat-party.gif")
+    carouselData.detail = "If the var item = ShoppingListItem() is done in the appDelegate.swift, from the function application:didFinishLaunchingWithOptions we get the error"
+    carouselView.dataSource.append(carouselData)
+    //5
+    carouselData = CarouselData()
+    carouselData.imageURL = URL(string: "https://www.baidu.com/123")
+    carouselData.detail = "<class> cannot be initialised because it has no accessible initializers"
+    carouselView.dataSource.append(carouselData)
+    return carouselView
 }()
 
 //step 3
 override func viewDidLoad() {
-  view.addSubview(carouselView)
+    view.addSubview(carouselView)
 }
 ```  
-###AutoScrollOption
+### AutoScrollOption
 ```Swift
 public enum AutoScrollOption {
-    case Enable(Bool)  //是否开启自动轮播，默认开启
-    case TimeInterval(NSTimeInterval)  //轮播频率
+    case enable(Bool) //是否开启自动轮播，默认开启
+    case timeInterval(Foundation.TimeInterval)  //轮播频率
 }
+
 //such as
-sbCarouselView.autoScrollOptions = [.Enable(false)]
+sbCarouselView.autoScrollOptions = [.enable(false)]
 ```  
-###PageControlOption
+### PageControlOption
 ```Swift
 public enum PageControlOption {
-    case Hidden(Bool)
-    case IndicatorTintColor(UIColor)
-    case CurrentIndicatorTintColor(UIColor)
+    case hidden(Bool)
+    case indicatorTintColor(UIColor)
+    case currentIndicatorTintColor(UIColor)
 }
 //such as
-sbCarouselView.pageControlOptions = [.IndicatorTintColor(UIColor.greenColor())
-            , .CurrentIndicatorTintColor(UIColor.grayColor())]        
+sbCarouselView.pageControlOptions = [.indicatorTintColor(UIColor.greenColor())
+            , .currentIndicatorTintColor(UIColor.grayColor())]        
 ```  
-###CarouselViewDelegate
+### CarouselViewDelegate
 ```Swift
-//自定义Cell时才使用到
-optional func carouselView(view:CarouselView, cellAtIndex index:NSInteger) -> UICollectionViewCell
-//点击事件
-optional public func carouselView(view: FCCarouselView.CarouselView, didSelectItemAtIndex index: NSInteger)
+@objc public protocol CarouselViewDelegate: class {
+    //自定义Cell时才使用到
+    @objc optional func carouselView(_ view:CarouselView, cellAtIndexPath indexPath:IndexPath, pageIndex: Int) -> UICollectionViewCell
+    //点击事件
+    @objc optional func carouselView(_ view:CarouselView, didSelectItemAtIndex index:NSInteger)
+}
 ```  
-###Custom Cell Like UICollectionDelegate
+### Custom Cell Like UICollectionDelegate
 ```Swift
 //step 1 registerClass
-carouselView.registerClass(CustomCollectionViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(CustomCollectionViewCell))
+carouselView.registerClass(CustomCollectionViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(CustomCollectionViewCell.self))
 
 //step 2 
-func carouselView(view: CarouselView, cellAtIndex index: NSInteger) -> UICollectionViewCell {
-    let customCell = carouselView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(CustomCollectionViewCell), forIndex: index) as! CustomCollectionViewCell
-    if let detail = carouselView.dataSource[index] as? String {
+func carouselView(_ view: CarouselView, cellAtIndexPath indexPath: IndexPath, pageIndex: Int) -> UICollectionViewCell {
+    let customCell = carouselView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(CustomCollectionViewCell.self), forIndex: pageIndex) as! CustomCollectionViewCell
+    if let detail = carouselView.dataSource[pageIndex] as? String {
         customCell.detailLabel.text = detail
     }
     return customCell
@@ -123,7 +127,7 @@ func carouselView(view: CarouselView, cellAtIndex index: NSInteger) -> UICollect
 #Contact
 有任何问题可以提issues或联系我  
 Weibo : [@飛呈jerry](http://weibo.com/2871687492)  
-Jianshu Website: http://www.fcgeek.com  
+Website: http://www.fcgeek.com  
 
 # License  
 
