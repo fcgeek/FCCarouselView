@@ -13,7 +13,7 @@ class CustomCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(detailLabel)
-        backgroundColor = UIColor.blackColor()
+        backgroundColor = UIColor.black
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -22,9 +22,9 @@ class CustomCollectionViewCell: UICollectionViewCell {
     
     lazy var detailLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.whiteColor()
+        label.textColor = UIColor.white
         label.frame = self.bounds
-        label.textAlignment = .Center
+        label.textAlignment = .center
         label.numberOfLines = 3
         return label
     }()

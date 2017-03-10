@@ -20,7 +20,7 @@ class CustomViewController: UIViewController, CarouselViewDelegate {
         
         // Do any additional setup after loading the view.
         automaticallyAdjustsScrollViewInsets = false
-        view.backgroundColor = UIColor.whiteColor()
+        view.backgroundColor = UIColor.white
         view.addSubview(carouselView)
     }
     
@@ -30,12 +30,12 @@ class CustomViewController: UIViewController, CarouselViewDelegate {
     }
     
     //MARK: CarouselViewDelegate
-    func carouselView(view: CarouselView, didSelectItemAtIndex index: NSInteger) {
+    func carouselView(_ view: CarouselView, didSelectItemAtIndex index: NSInteger) {
         print(index)
     }
     
-    func carouselView(view: CarouselView, cellAtIndex index: NSInteger) -> UICollectionViewCell {
-        let customCell = carouselView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(CustomCollectionViewCell), forIndex: index) as! CustomCollectionViewCell
+    func carouselView(_ view: CarouselView, cellAtIndex index: NSInteger) -> UICollectionViewCell {
+        let customCell = carouselView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(CustomCollectionViewCell.self), forIndex: index) as! CustomCollectionViewCell
         if let detail = carouselView.dataSource[index] as? String {
             customCell.detailLabel.text = detail
         }
@@ -43,9 +43,9 @@ class CustomViewController: UIViewController, CarouselViewDelegate {
     }
     
     //MARK: getter
-    private lazy var carouselView:CarouselView = {
-        let carouselView = CarouselView(frame: CGRectMake(0, 64, UIScreen.mainScreen().bounds.width, 200))
-        carouselView.registerClass(CustomCollectionViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(CustomCollectionViewCell))
+    fileprivate lazy var carouselView:CarouselView = {
+        let carouselView = CarouselView(frame: CGRect(x: 0, y: 64, width: UIScreen.main.bounds.width, height: 200))
+        carouselView.registerClass(CustomCollectionViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(CustomCollectionViewCell.self))
         carouselView.delegate = self
         //1
         carouselView.dataSource = ["I created a swift class with string optionals (String?) and instantiated the class in a different swift file and got a compile error.",

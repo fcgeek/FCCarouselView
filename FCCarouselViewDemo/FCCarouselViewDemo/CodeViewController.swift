@@ -20,7 +20,7 @@ class CodeViewController: UIViewController, CarouselViewDelegate {
         
         // Do any additional setup after loading the view.
         automaticallyAdjustsScrollViewInsets = false
-        view.backgroundColor = UIColor.whiteColor()
+        view.backgroundColor = UIColor.white
         view.addSubview(carouselView)
     }
     
@@ -30,13 +30,13 @@ class CodeViewController: UIViewController, CarouselViewDelegate {
     }
     
     //MARK: CarouselViewDelegate
-    func carouselView(view: CarouselView, didSelectItemAtIndex index: NSInteger) {
+    func carouselView(_ view: CarouselView, didSelectItemAtIndex index: NSInteger) {
         print(index)
     }
     
     //MARK: getter
-    private lazy var carouselView:CarouselView = {
-        let carouselView = CarouselView(frame: CGRectMake(0, 64, UIScreen.mainScreen().bounds.width, 200))
+    fileprivate lazy var carouselView:CarouselView = {
+        let carouselView = CarouselView(frame: CGRect(x: 0, y: 64, width: UIScreen.main.bounds.width, height: 200))
         carouselView.delegate = self
         //1
         var carouselData = CarouselData()
@@ -45,7 +45,7 @@ class CodeViewController: UIViewController, CarouselViewDelegate {
         carouselView.dataSource.append(carouselData)
         //2
         carouselData = CarouselData()
-        carouselData.imageURL = NSURL(string: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSMFynE3clrgzCU2ZDw9SDn5gM2JuwEsCE37Qf4S6uBlJljejEYWg")
+        carouselData.imageURL = URL(string: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSMFynE3clrgzCU2ZDw9SDn5gM2JuwEsCE37Qf4S6uBlJljejEYWg")
         carouselData.detail = "When I instantiate the class"
         carouselView.dataSource.append(carouselData)
         //3
@@ -54,12 +54,12 @@ class CodeViewController: UIViewController, CarouselViewDelegate {
         carouselView.dataSource.append(carouselData)
         //4
         carouselData = CarouselData()
-        carouselData.imageURL = NSURL(string: "https://g.twimg.com/blog/blog/image/Cat-party.gif")
+        carouselData.imageURL = URL(string: "https://g.twimg.com/blog/blog/image/Cat-party.gif")
         carouselData.detail = "If the var item = ShoppingListItem() is done in the appDelegate.swift, from the function application:didFinishLaunchingWithOptions we get the error"
         carouselView.dataSource.append(carouselData)
         //5
         carouselData = CarouselData()
-        carouselData.imageURL = NSURL(string: "https://www.baidu.com/123")
+        carouselData.imageURL = URL(string: "https://www.baidu.com/123")
         carouselData.detail = "<class> cannot be initialised because it has no accessible initializers"
         carouselView.dataSource.append(carouselData)
         return carouselView

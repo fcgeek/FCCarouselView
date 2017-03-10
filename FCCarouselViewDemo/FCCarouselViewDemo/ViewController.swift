@@ -20,11 +20,11 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func codeBtnAction(sender: AnyObject) {
+    @IBAction func codeBtnAction(_ sender: AnyObject) {
         navigationController?.pushViewController(CodeViewController(), animated: true)
     }
     
-    @IBAction func customBtnAction(sender: AnyObject) {
+    @IBAction func customBtnAction(_ sender: AnyObject) {
         navigationController?.pushViewController(CustomViewController(), animated: true)
     }
     
