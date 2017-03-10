@@ -9,7 +9,7 @@
 import UIKit
 
 @objc public protocol CarouselViewDelegate: class {
-    @objc optional func carouselView(_ view:CarouselView, cellAtIndex index:NSInteger) -> UICollectionViewCell
+    @objc optional func carouselView(_ view:CarouselView, cellAtIndexPath indexPath:IndexPath, pageIndex: Int) -> UICollectionViewCell
     @objc optional func carouselView(_ view:CarouselView, didSelectItemAtIndex index:NSInteger)
 }
 
@@ -73,10 +73,11 @@ open class CarouselView: UIView {
         collectionView.frame = bounds
         let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout
         layout?.itemSize = bounds.size
-        collectionView.scrollToItem(at: IndexPath(row: pageControl.currentPage+1, section: 0), at: UICollectionViewScrollPosition(), animated: false)
         let size = pageControl.size(forNumberOfPages: pageControl.numberOfPages)
         pageControl.frame.size.height = size.height
         pageControl.frame.origin.y = self.bounds.height - size.height
+        if pageCount < 2 { return }
+        collectionView.scrollToItem(at: IndexPath(row: pageControl.currentPage+1, section: 0), at: UICollectionViewScrollPosition(), animated: false)
     }
     
     fileprivate func startTimer() {
@@ -188,7 +189,7 @@ extension CarouselView: UICollectionViewDataSource {
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let index = getIndexWithIndexPath(indexPath)
-        if let cell = delegate?.carouselView?(self, cellAtIndex: index) {
+        if let cell = delegate?.carouselView?(self, cellAtIndexPath: indexPath, pageIndex: index) {
             return cell
         }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(CarouselCollectionViewCell), for: indexPath) as! CarouselCollectionViewCell
