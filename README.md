@@ -14,28 +14,28 @@ Swift实现的循环轮播
 先不哔哔，上图  
 
 ![demo](https://github.com/fcgeek/FCCarouselView/blob/master/pic/demo.gif)  
-#Requirements
+# Requirements
  - iOS 8+  
  - Swift 3.0.1  
  - Xcode 8.2.1 
 
-#Installation  
+# Installation  
 
-###1.CocoaPods  
+### 1.CocoaPods  
 ```
 source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 pod 'FCCarouselView'
 ```  
-###2.Carthage  
+### 2.Carthage  
 ```
 github 'fcgeek/FCCarouselView'
 ```  
 
-###3.将代码拖到你的项目中  
+### 3.将代码拖到你的项目中  
 
-#Usage  
+# Usage  
 ```Swift
 //step 1
 import FCCarouselView
@@ -124,7 +124,7 @@ func carouselView(_ view: CarouselView, cellAtIndexPath indexPath: IndexPath, pa
 
 更多内容请查看Demo
 
-#Contact
+# Contact
 有任何问题可以提issues或联系我  
 Weibo : [@飛呈jerry](http://weibo.com/2871687492)  
 Website: http://www.fcgeek.com  
