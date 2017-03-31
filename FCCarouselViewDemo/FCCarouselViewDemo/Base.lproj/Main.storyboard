@@ -1,8 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="KeX-Wl-FBK">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="KeX-Wl-FBK">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -14,32 +18,32 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tfU-01-wMt">
-                                <rect key="frame" x="262" y="235" width="77" height="30"/>
+                                <rect key="frame" x="149" y="268.5" width="77" height="30"/>
                                 <state key="normal" title="StoryBoard"/>
                                 <connections>
                                     <segue destination="HGj-z6-izE" kind="push" id="kIt-XO-m5b"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4qg-V4-TAF">
-                                <rect key="frame" x="282" y="285" width="37" height="30"/>
+                                <rect key="frame" x="169" y="318.5" width="37" height="30"/>
                                 <state key="normal" title="Code"/>
                                 <connections>
                                     <action selector="codeBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jdc-EH-rvr"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OYL-AM-VPE">
-                                <rect key="frame" x="273" y="335" width="54" height="30"/>
+                                <rect key="frame" x="160.5" y="368.5" width="54" height="30"/>
                                 <state key="normal" title="Custom"/>
                                 <connections>
                                     <action selector="customBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="UYg-Qo-9Tt"/>
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="4qg-V4-TAF" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="405-or-ByN"/>
                             <constraint firstItem="4qg-V4-TAF" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Egs-Pa-xVy"/>
@@ -64,18 +68,18 @@
                         <viewControllerLayoutGuide type="bottom" id="5nF-H8-kK2"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Y06-Gk-FXD">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nBf-De-Og4" customClass="CarouselView" customModule="FCCarouselView">
-                                <rect key="frame" x="0.0" y="64" width="600" height="200"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="200"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="200" id="5dl-JB-dTs"/>
                                 </constraints>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="nBf-De-Og4" secondAttribute="trailing" id="GjN-Vc-Wiu"/>
                             <constraint firstItem="nBf-De-Og4" firstAttribute="leading" secondItem="Y06-Gk-FXD" secondAttribute="leading" id="cEA-bf-wZn"/>

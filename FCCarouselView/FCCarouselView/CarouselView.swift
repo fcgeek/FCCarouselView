@@ -116,7 +116,7 @@ open class CarouselView: UIView {
         collectionView.isPagingEnabled = true
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(CarouselCollectionViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(CarouselCollectionViewCell))
+        collectionView.register(CarouselCollectionViewCell.self, forCellWithReuseIdentifier: NSStringFromClass(CarouselCollectionViewCell.self))
         return collectionView
     }()
     
@@ -192,7 +192,7 @@ extension CarouselView: UICollectionViewDataSource {
         if let cell = delegate?.carouselView?(self, cellAtIndexPath: indexPath, pageIndex: index) {
             return cell
         }
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(CarouselCollectionViewCell), for: indexPath) as! CarouselCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(CarouselCollectionViewCell.self), for: indexPath) as! CarouselCollectionViewCell
         if let carouselData = dataSource[index] as? CarouselData {
             cell.carouselData = carouselData
         }
