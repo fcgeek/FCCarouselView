@@ -59,8 +59,8 @@ class CarouselCollectionViewCell: UICollectionViewCell {
             if let image = carouselData.image {
                 imageView.image = image
             } else if let imageUrl = carouselData.imageURL {
-                ImageManager.shareManager.downloadImageWithURL(imageUrl, placeholder: placeHolderImage, downloadDoneClosure: { [unowned self](image) in
-                    self.imageView.image = image
+                ImageManager.shareManager.downloadImageWithURL(imageUrl, placeholder: placeHolderImage, downloadDoneClosure: { [weak self](image) in
+                    self?.imageView.image = image
                     })
             }
             if let detail = carouselData.detail {
