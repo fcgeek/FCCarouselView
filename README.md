@@ -2,7 +2,7 @@
 ![Build Status](https://travis-ci.org/fcgeek/FCCarouselView.svg)
 [![Carthage](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage/)
 ![CocoaPods](https://img.shields.io/cocoapods/v/FCCarouselView.svg?style=flat)
-![Language](https://img.shields.io/badge/language-Swift%202.2-orange.svg)
+![Language](https://img.shields.io/badge/language-Swift%203.1-orange.svg)
 ![Platform](https://img.shields.io/cocoapods/p/FCCarouselView.svg?style=flat)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/fcgeek/FCCarouselView/blob/master/LICENSE)  
 Swift实现的循环轮播  
@@ -127,7 +127,7 @@ func carouselView(_ view: CarouselView, cellAtIndexPath indexPath: IndexPath, pa
 # Contact
 有任何问题可以提issues或联系我  
 Weibo : [@飛呈jerry](http://weibo.com/2871687492)  
-Website: https://www.fcgeek.com  
+Blog: https://www.fcgeek.com  
 
 # License  
 
